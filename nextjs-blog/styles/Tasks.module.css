@@ -1,0 +1,11 @@
+.taskItem {
+    color: blue;
+    list-style: square;
+    margin-bottom: 0.25em;
+}
+
+.taskDone {
+    color: grey;
+    list-style: none;
+    text-decoration: line-through;
+}
