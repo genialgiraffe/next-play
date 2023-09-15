@@ -2,16 +2,18 @@ import { useState } from "react";
 import styles from "../../styles/Tasks.module.css";
 import classnames from "classnames";
 
+const newId = () => crypto.randomUUID();
+
 const initialTasks = [
-    { task: "Mop floor", isDone: true },
-    { task: "Empty bin", isDone: true },
-    { task: "Make soup", isDone: false },
-    { task: "Order book", isDone: false },
+    { id: "aaa", task: "Mop floor", isDone: true },
+    { id: "bbb", task: "Empty bin", isDone: true },
+    { id: "ccc", task: "Make soup", isDone: false },
+    { id: "ddd", task: "Order book", isDone: false },
 ];
 
 const TaskList = ({ tasks }) => {
     return <ul>
-        {tasks.map(t => <li className={classnames(
+        {tasks.map(t => <li key={t.id} className={classnames(
             styles.taskItem,
             { [styles.taskDone]: t.isDone })}>
             {t.task}
@@ -20,7 +22,7 @@ const TaskList = ({ tasks }) => {
     </ul >
 };
 
-const addTask = (tasks, setTask, newItem) => { setTask([...tasks, { task: newItem }]); };
+const addTask = (tasks, setTask, newItem) => { setTask([...tasks, { id: newId(), task: newItem, isDone: false }]); };
 
 const handleNewItem = (newValue, setNewItem, setDisableAdd) => {
     setDisableAdd(!newValue.length);
