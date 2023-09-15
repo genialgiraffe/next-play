@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import styles from "../../styles/Tasks.module.css";
 import classnames from "classnames";
 
@@ -22,17 +22,24 @@ const TaskList = ({ tasks }) => {
     </ul >
 };
 
-const addTask = (tasks, setTask, newItem) => { setTask([...tasks, { id: newId(), task: newItem, isDone: false }]); };
-
-const handleNewItem = (newValue, setNewItem, setDisableAdd) => {
-    setDisableAdd(!newValue.length);
-    setNewItem(newValue);
-};
-
 const Tasks = () => {
     const [tasks, setTasks] = useState(initialTasks);
     const [disableAdd, setDisableAdd] = useState(true);
     const [newItem, setNewItem] = useState("");
+    const submitButtonRef = useRef(null);
+
+    const addTask = useCallback((newItem) => { setTasks([...tasks, { id: newId(), task: newItem, isDone: false }]); }, [tasks, setTasks]);
+
+    const handleNewItem = useCallback((newValue) => {
+        setDisableAdd(!newValue.length);
+        setNewItem(newValue);
+    }, [setDisableAdd, setNewItem]);
+
+    const handleEnterKeypress = useCallback((e) => {
+        if (e.keyCode === 13 && submitButtonRef.current && !submitButtonRef.current.disabled) {
+            submitButtonRef.current.click();
+        };
+    }, [submitButtonRef]);
 
     return <>
         <h1>Task Manager</h1>
@@ -43,8 +50,8 @@ const Tasks = () => {
         </label>
         <TaskList tasks={tasks} />
         <h2>Add Tasks</h2>
-        <input type="text" id="newItem" onChange={(e) => handleNewItem(e.target.value, setNewItem, setDisableAdd)} />
-        <button disabled={disableAdd} onClick={() => { addTask(tasks, setTasks, newItem) }}>Add</button >
+        <input type="text" id="newItem" onChange={(e) => handleNewItem(e.target.value, setNewItem, setDisableAdd)} onKeyUp={handleEnterKeypress} />
+        <button ref={submitButtonRef} disabled={disableAdd} onClick={() => { addTask(newItem) }}>Add</button >
     </>
 };
 
